@@ -41,3 +41,15 @@ export async function rejectReservation(id: string) {
 export async function waitlistReservation(id: string) {
   await supabase.from("reservations").update({ status: "대기" }).eq("id", id);
 }
+
+export async function postNotice(content: string, pinned: boolean) {
+  const text = content.trim();
+  if (!text) return { ok: false as const };
+  const { data, error } = await supabase
+    .from("notices")
+    .insert({ content: text, pinned })
+    .select("id, content, pinned")
+    .single();
+  if (error || !data) return { ok: false as const };
+  return { ok: true as const, notice: data };
+}

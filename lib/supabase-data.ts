@@ -110,3 +110,13 @@ export async function getPendingRequests() {
     full: classIsFull(r.classes.id, r.classes.capacity),
   }));
 }
+
+// 알림판 (PRD 3-5) — 📌 고정 글을 맨 위에, 나머지는 최신순
+export async function getNotices() {
+  const { data } = await supabase
+    .from("notices")
+    .select("id, content, pinned")
+    .order("pinned", { ascending: false })
+    .order("created_at", { ascending: false });
+  return data ?? [];
+}
