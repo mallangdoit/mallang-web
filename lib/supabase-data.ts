@@ -1,17 +1,25 @@
 import { supabase } from "./supabase";
 
+// 시각은 늘 한국 시간 기준 (PRD 10장) — Vercel 서버는 UTC로 돈다
+const TZ = "Asia/Seoul";
+
 function fmtTime(iso: string) {
-  const d = new Date(iso);
-  return `${String(d.getHours()).padStart(2, "0")}:${String(
-    d.getMinutes()
-  ).padStart(2, "0")}`;
+  return new Intl.DateTimeFormat("en-GB", {
+    timeZone: TZ,
+    hour: "2-digit",
+    minute: "2-digit",
+    hour12: false,
+  }).format(new Date(iso));
+}
+
+// 한국 시간으로 오늘 날짜 "2026-10-08"
+function seoulToday() {
+  return new Intl.DateTimeFormat("en-CA", { timeZone: TZ }).format(new Date());
 }
 
 function todayRange() {
-  const start = new Date();
-  start.setHours(0, 0, 0, 0);
-  const end = new Date(start);
-  end.setDate(end.getDate() + 1);
+  const start = new Date(`${seoulToday()}T00:00:00+09:00`);
+  const end = new Date(start.getTime() + 24 * 60 * 60 * 1000);
   return { start: start.toISOString(), end: end.toISOString() };
 }
 
@@ -62,8 +70,8 @@ export async function getTodayData() {
     };
   });
 
-  const now = new Date();
-  const dateLabel = `${now.getMonth() + 1}월 ${now.getDate()}일`;
+  const [, month, day] = seoulToday().split("-").map(Number);
+  const dateLabel = `${month}월 ${day}일`;
 
   return {
     dateLabel,
