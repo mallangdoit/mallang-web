@@ -53,3 +53,31 @@ export async function postNotice(content: string, pinned: boolean) {
   if (error || !data) return { ok: false as const };
   return { ok: true as const, notice: data };
 }
+
+// 클래스 만들기 (PRD 3-12) — 정원 6~10 · 지난 시각 막기 · 시각은 한국 시간
+export async function createClass(input: {
+  name: string;
+  date: string;
+  time: string;
+  capacity: number;
+}) {
+  const name = input.name.trim();
+  if (!name || !/^\d{4}-\d{2}-\d{2}$/.test(input.date) || !/^\d{2}:\d{2}$/.test(input.time)) {
+    return { ok: false as const, reason: "칸을 모두 채워 주세요" };
+  }
+  if (!Number.isInteger(input.capacity) || input.capacity < 6 || input.capacity > 10) {
+    return { ok: false as const, reason: "정원은 6~10명입니다" };
+  }
+  const startsAt = new Date(`${input.date}T${input.time}:00+09:00`);
+  if (startsAt.getTime() <= Date.now()) {
+    return { ok: false as const, reason: "이미 지난 시각입니다" };
+  }
+  const { error } = await supabase.from("classes").insert({
+    id: `c-${Date.now().toString(36)}`,
+    name,
+    starts_at: startsAt.toISOString(),
+    capacity: input.capacity,
+  });
+  if (error) return { ok: false as const, reason: "만들지 못했어요" };
+  return { ok: true as const, name };
+}
