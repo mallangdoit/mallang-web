@@ -41,5 +41,6 @@ export async function proxy(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/((?!_next/static|_next/image|favicon.ico|.*\.(?:svg|png|jpg|jpeg|gif|webp|ico)$).*)"],
+  // /app 은 수강생 앱 (PRD 3-14) — 주인 로그인을 거치지 않는다
+  matcher: ["/((?!_next/static|_next/image|favicon.ico|app(?:/|$)|.*\.(?:svg|png|jpg|jpeg|gif|webp|ico)$).*)"],
 };
