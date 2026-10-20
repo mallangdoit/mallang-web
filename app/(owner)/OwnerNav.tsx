@@ -18,7 +18,9 @@ export default function OwnerNav() {
   return (
     <header className="bg-white border-b border-[#EDE0D2] text-[#2B2018]">
       <div className="mx-auto max-w-5xl px-4 py-2.5 flex flex-wrap items-center gap-x-4 gap-y-2">
-        <span className="font-bold">말랑공방</span>
+        <Link href="/today" aria-label="홈 (오늘 클래스)" className="font-bold hover:text-[#7A4B32]">
+          🏠 말랑공방
+        </Link>
 
         <nav className="flex flex-wrap gap-1 order-last w-full sm:order-none sm:w-auto">
           {MENUS.map((m) => {
